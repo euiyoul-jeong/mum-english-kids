@@ -1,0 +1,60 @@
+// 앱 셸 캐시 — 파일을 바꾸면 VERSION을 올릴 것
+const VERSION = 'v1';
+const CACHE = `mumkids-${VERSION}`;
+const SHELL = [
+  './',
+  './index.html',
+  './css/app.css',
+  './js/data.js',
+  './js/app.js',
+  './manifest.webmanifest',
+  './favicon.ico',
+  './icons/logo.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/apple-touch-icon.png',
+];
+
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k.startsWith('mumkids-') && k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', e => {
+  const req = e.request;
+  // 외부 도메인(콘텐츠 사이트, 폰트)은 관여하지 않음
+  if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
+
+  // 페이지 이동: 네트워크 우선, 실패 시 캐시된 셸
+  if (req.mode === 'navigate') {
+    e.respondWith(
+      fetch(req)
+        .then(res => {
+          const copy = res.clone();
+          caches.open(CACHE).then(c => c.put('./index.html', copy));
+          return res;
+        })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // 정적 파일: stale-while-revalidate
+  e.respondWith(
+    caches.open(CACHE).then(cache =>
+      cache.match(req).then(cached => {
+        const network = fetch(req)
+          .then(res => { if (res.ok) cache.put(req, res.clone()); return res; })
+          .catch(() => cached);
+        return cached || network;
+      })
+    )
+  );
+});

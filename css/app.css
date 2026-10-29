@@ -1,0 +1,204 @@
+:root {
+  --bg: #000;
+  --fg: #fff;
+  --muted: #666;
+  --surface: #1c1c1c;
+  --surface-hover: #2a2a2a;
+  --panel: #1a1a1a;
+  --line: #222;
+  --line-strong: #444;
+  --accent: #ffe234;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%; background: var(--bg); color: var(--fg);
+  font-family: 'Noto Sans KR', sans-serif; overflow: hidden;
+}
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+
+.page {
+  display: flex; flex-direction: column; height: 100vh; height: 100dvh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.left-panel {
+  display: flex; flex-direction: column; flex-shrink: 0;
+  padding: 10px 14px 6px 14px; gap: 8px;
+}
+
+.iframe-area {
+  flex: 1; padding: 0 12px 12px 12px;
+  display: flex; flex-direction: column; min-height: 0;
+}
+
+/* ── 로고 ── */
+.logo-wrap { display: flex; align-items: center; flex-shrink: 0; line-height: 0; }
+.logo { height: 44px; width: auto; }
+
+/* ── 셀렉터 ── */
+.selector-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.dropdown { position: relative; }
+.dropdown-btn {
+  display: flex; align-items: center; gap: 5px; cursor: pointer; user-select: none;
+  background: none; border: none; padding: 0; text-align: left;
+}
+.dropdown-btn:focus-visible, .nav-btn:focus-visible, .width-ctrl button:focus-visible,
+.install-btn:focus-visible, .panel-item:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+
+.cat-pill, .age-pill {
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Nunito', 'Noto Sans KR', sans-serif; font-weight: 900; font-size: 0.82rem;
+  color: #fff; border-radius: 50px; padding: 7px 14px;
+  line-height: 1.2; text-align: center; white-space: nowrap;
+  transition: filter 0.15s; min-width: 70px;
+}
+.age-pill { background: #fff; color: #000; min-width: 56px; }
+.dropdown-btn:hover .cat-pill, .dropdown-btn:hover .age-pill { filter: brightness(1.15); }
+
+.vol-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.vol-pill {
+  display: block; overflow: hidden; text-overflow: ellipsis;
+  background: var(--surface); border: 1.5px solid var(--line-strong); border-radius: 8px;
+  padding: 6px 10px; font-size: 0.82rem; font-weight: 700;
+  white-space: pre; transition: background 0.15s;
+}
+.dropdown-btn:hover .vol-pill { background: var(--surface-hover); }
+.arrow { font-size: 0.6rem; opacity: 0.8; flex-shrink: 0; }
+
+.nav-btn {
+  width: 32px; height: 32px; flex-shrink: 0;
+  background: var(--surface); border: 1.5px solid var(--line-strong); border-radius: 8px;
+  font-size: 0.75rem; cursor: pointer; transition: background 0.15s;
+}
+.nav-btn:hover:not(:disabled) { background: var(--surface-hover); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* ── 드롭다운 패널 ── */
+.dropdown-panel {
+  display: none; position: absolute; top: calc(100% + 6px); left: 0;
+  list-style: none;
+  background: var(--panel); border: 1px solid #333; border-radius: 10px;
+  z-index: 200; min-width: 190px;
+  max-height: 65vh; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.85);
+}
+.dropdown-panel.open { display: block; }
+.dropdown-panel::-webkit-scrollbar { width: 4px; }
+.dropdown-panel::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 4px; }
+
+.panel-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; cursor: pointer; font-size: 0.85rem;
+  color: #bbb; border-bottom: 1px solid #252525; transition: background 0.1s;
+  white-space: pre;
+}
+.panel-item:last-child { border-bottom: none; }
+.panel-item:hover, .panel-item:focus { background: var(--surface-hover); color: #fff; outline: none; }
+.panel-item[aria-selected="true"] { background: var(--line); color: var(--accent); font-weight: 700; }
+.panel-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── 가로 크기 조절 ── */
+.width-ctrl { display: none; align-items: center; gap: 8px; padding: 4px 0; flex-shrink: 0; }
+.width-ctrl button {
+  width: 38px; height: 38px;
+  background: var(--surface); border: 2px solid #555; border-radius: 7px;
+  font-size: 1.5rem; font-weight: 900; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, border-color 0.15s; user-select: none; flex-shrink: 0;
+}
+.width-ctrl button:hover { background: #2d2d2d; border-color: #888; }
+.width-ctrl button:active { transform: scale(0.92); }
+.width-ctrl .size-label { flex: 1; text-align: center; font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+
+/* ── 설치 버튼 ── */
+.install-btn {
+  align-self: flex-start;
+  background: var(--accent); color: #000; border: none; border-radius: 50px;
+  padding: 7px 16px; font-weight: 700; font-size: 0.82rem; cursor: pointer;
+}
+.install-btn:hover { filter: brightness(1.08); }
+
+/* ── iframe ── */
+.iframe-box {
+  position: relative;
+  flex: 1; border: 2px solid #2a2a2a; border-radius: 10px;
+  overflow-x: hidden; overflow-y: auto;
+  background: #111; display: flex;
+  align-items: flex-start; justify-content: center;
+  min-height: 0;
+}
+.iframe-box iframe { width: 100%; height: 100%; min-height: 730px; border: none; display: block; }
+
+.offline-overlay {
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.92); text-align: center; padding: 30px;
+}
+.offline-overlay .big { font-size: 1.8rem; font-weight: 900; color: var(--accent); }
+.offline-overlay .sub { font-size: 0.9rem; margin-top: 10px; line-height: 1.7; color: #aaa; }
+
+/* ── iOS 설치 안내 ── */
+.modal {
+  position: fixed; inset: 0; z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.75); padding: 16px;
+}
+.modal-card {
+  background: var(--panel); border: 1px solid #333; border-radius: 14px;
+  padding: 22px; max-width: 320px; text-align: center; line-height: 1.6;
+}
+.modal-card h2 { font-size: 1.05rem; margin-bottom: 10px; }
+.modal-card p { font-size: 0.88rem; color: #ccc; }
+.modal-card button {
+  margin-top: 16px; background: var(--accent); color: #000; border: none;
+  border-radius: 50px; padding: 8px 24px; font-weight: 700; cursor: pointer;
+}
+
+/* ── 카테고리 색상 ── */
+.c-audio    { background: #22b04b; }
+.c-story    { background: #44b832; color: #ffe234 !important; }
+.c-anim     { background: #ff6030; }
+.c-chant    { background: #f8b500; color: #000 !important; }
+.c-theme    { background: #8844ee; color: #ffe234 !important; }
+.c-drama    { background: #ff2266; }
+.c-telling  { background: #00aaff; }
+.c-speaking { background: #cc66ee; }
+.c-dance    { background: #cc1111; }
+.c-alphabet { background: #e7428d; }
+.c-all      { background: #f5e200; color: #000 !important; }
+
+/* ── 가로 모드 (기본 규칙을 덮어쓰도록 맨 끝에 둠) ── */
+@media (orientation: landscape) {
+  .page { flex-direction: row; }
+
+  .left-panel {
+    width: 240px; height: 100%; padding: 14px 12px;
+    gap: 12px; border-right: 1px solid var(--line);
+    overflow-x: hidden; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: #333 transparent;
+  }
+  .left-panel::-webkit-scrollbar { width: 3px; }
+  .left-panel::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+  .iframe-area { padding: 12px; height: 100%; min-width: 0; }
+
+  .logo { height: auto; width: 100%; max-width: 200px; }
+
+  .selector-row { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 10px; }
+  .selector-row .dropdown-btn,
+  .selector-row .cat-pill,
+  .selector-row .age-pill { width: 100%; }
+  .selector-row .vol-pill { flex: 1; width: 0; min-width: 0; }
+  .selector-row .dropdown-panel { width: 100%; min-width: 0; }
+  .selector-row .panel-item { white-space: normal; }
+  .vol-row { position: relative; }
+  .vol-row .dropdown { position: static; flex: 1; width: 0; min-width: 0; }
+
+  .width-ctrl { display: flex; }
+  .install-btn { align-self: stretch; margin-top: auto; }
+}

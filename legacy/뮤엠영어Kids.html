@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<!-- saved from url=(0057)file:///C:/Users/tinyw/Desktop/mumenglish_kids%20(3).html -->
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>뮤엠영어 Kids</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Noto+Sans+KR:wght@400;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #000; color: #fff; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; }
+
+  .page { display: flex; flex-direction: column; height: 100vh; }
+
+  .left-panel {
+    display: flex; flex-direction: column; flex-shrink: 0;
+    padding: 10px 14px 6px 14px; gap: 8px;
+  }
+
+  .iframe-area {
+    flex: 1; padding: 0 12px 12px 12px;
+    display: flex; flex-direction: column; min-height: 0;
+  }
+
+  /* ── 가로 모드 ── */
+  @media (orientation: landscape), (min-aspect-ratio: 4/3) {
+    .page { flex-direction: row; }
+
+    .left-panel {
+      width: auto; min-width: 0; max-width: none;
+      height: 100vh; padding: 14px 12px;
+      gap: 12px; border-right: 1px solid #222;
+      overflow-y: auto; flex-shrink: 0;
+      scrollbar-width: thin; scrollbar-color: #333 transparent;
+    }
+    .left-panel::-webkit-scrollbar { width: 3px; }
+    .left-panel::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+    .iframe-area { flex: 1; padding: 12px; height: 100vh; min-width: 0; }
+
+    .selector-row { flex-direction: column; align-items: stretch; gap: 10px; }
+    .selector-row .dropdown { width: 100%; }
+    .selector-row .dropdown-btn { width: 100%; }
+    .selector-row .cat-pill { width: 100%; }
+    .selector-row .vol-pill { width: 100%; }
+    .selector-row .dropdown-panel { width: 100%; min-width: 0; left: 0; right: 0; }
+
+  }
+
+  /* ── 로고 ── */
+  .logo-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .logo-text { font-weight: 900; font-size: 1.4rem; color: #fff; letter-spacing: -1px; line-height: 1; }
+  .logo-kids { background: #fff; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; padding: 4px 10px 5px 10px; }
+  .logo-kids span {
+    font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.2rem;
+    background: linear-gradient(90deg,#ff6eb4 0%,#ff4444 30%,#44cc44 55%,#ffd700 80%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  /* ── 셀렉터 ── */
+  .selector-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .dropdown { position: relative; }
+  .dropdown-btn { display: flex; align-items: center; gap: 5px; cursor: pointer; user-select: none; }
+
+  .cat-pill {
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 0.82rem;
+    color: #fff; border-radius: 50px; padding: 7px 14px;
+    line-height: 1.2; text-align: center; white-space: nowrap;
+    transition: filter 0.15s; min-width: 70px;
+  }
+  .cat-pill:hover { filter: brightness(1.15); }
+
+  .vol-pill {
+    display: flex; align-items: center;
+    background: #1c1c1c; border: 1.5px solid #444; border-radius: 8px;
+    padding: 6px 10px; font-size: 0.82rem; font-weight: 700;
+    color: #fff; white-space: nowrap; cursor: pointer; transition: background 0.15s;
+  }
+  .vol-pill:hover { background: #2a2a2a; }
+  .arrow { font-size: 0.6rem; color: #fff; opacity: 0.8; flex-shrink: 0; }
+
+  /* ── 드롭다운 패널 ── */
+  .dropdown-panel {
+    display: none; position: absolute; top: calc(100% + 6px); left: 0;
+    background: #1a1a1a; border: 1px solid #333; border-radius: 10px;
+    overflow: hidden; z-index: 200; min-width: 190px;
+    max-height: 65vh; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: #444 transparent;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.85);
+  }
+  .dropdown-panel.open { display: block; }
+  .dropdown-panel::-webkit-scrollbar { width: 4px; }
+  .dropdown-panel::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+
+  .panel-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; cursor: pointer; font-size: 0.85rem;
+    color: #bbb; border-bottom: 1px solid #252525; transition: background 0.1s;
+  }
+  .panel-item:last-child { border-bottom: none; }
+  .panel-item:hover { background: #2a2a2a; color: #fff; }
+  .panel-item.active { background: #222; color: #ffe234; font-weight: 700; }
+  .panel-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── 가로 크기 조절 버튼 ── */
+  .width-ctrl {
+    display: flex;
+    align-items: center; gap: 8px;
+    padding: 4px 0; flex-shrink: 0;
+  }
+  .width-ctrl button {
+    width: 38px; height: 38px;
+    background: #1c1c1c; border: 2px solid #555; border-radius: 7px;
+    color: #fff; font-size: 1.5rem; font-weight: 900; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, border-color 0.15s; user-select: none; flex-shrink: 0;
+  }
+  .width-ctrl button:hover { background: #2d2d2d; border-color: #888; }
+  .width-ctrl button:active { transform: scale(0.92); }
+  .width-ctrl .size-label {
+    flex: 1; text-align: center;
+    font-size: 0.78rem; color: #666; white-space: nowrap;
+  }
+
+  /* ── iframe ── */
+  .iframe-box {
+    flex: 1; border: 2px solid #2a2a2a; border-radius: 10px;
+    overflow-x: hidden; overflow-y: auto;
+    background: #111; display: flex;
+    align-items: flex-start; justify-content: center;
+    min-height: 0; height: 100%;
+  }
+  .iframe-box iframe { width: 100%; height: 100%; min-height: 730px; border: none; display: block; }
+
+  .placeholder { text-align: center; color: #444; padding: 30px; }
+  .placeholder .big { font-size: 1.8rem; font-weight: 900; color: #2a2a2a; }
+  .placeholder .sub { font-size: 0.82rem; margin-top: 10px; line-height: 1.7; color: #383838; }
+
+  /* ── 카테고리 색상 ── */
+  .c-audio    { background: #22b04b; }
+  .c-story    { background: #44b832; color: #ffe234 !important; }
+  .c-anim     { background: #ff6030; }
+  .c-theme    { background: #8844ee; color: #ffe234 !important; }
+  .c-drama    { background: #ff2266; }
+  .c-telling  { background: #00aaff; }
+  .c-speaking { background: #cc66ee; }
+  .c-dance    { background: #cc1111; }
+  .c-all      { background: #f5e200; color: #000 !important; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- 좌측(세로: 상단) 패널 -->
+  <div class="left-panel">
+
+    <div class="logo-wrap">
+      <div class="logo-text">뮤엠영어</div>
+      <div class="logo-kids"><span>Kids</span></div>
+    </div>
+
+    <div class="selector-row">
+      <!-- 카테고리 -->
+      <div class="dropdown" id="cat-dd">
+        <div class="dropdown-btn" onclick="toggleDD(&#39;cat-dd&#39;)">
+          <div class="cat-pill c-story" id="cat-display">Story Song</div>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="dropdown-panel" id="cat-panel"><div class="panel-item active" data-key="story"><span class="panel-dot c-story"></span>Story Song</div><div class="panel-item" data-key="audio"><span class="panel-dot c-audio"></span>Audio</div><div class="panel-item" data-key="animation"><span class="panel-dot c-anim"></span>Animation</div><div class="panel-item" data-key="theme"><span class="panel-dot c-theme"></span>Theme Song</div><div class="panel-item" data-key="drama"><span class="panel-dot c-drama"></span>Drama</div><div class="panel-item" data-key="telling"><span class="panel-dot c-telling"></span>Storytelling</div><div class="panel-item" data-key="speaking"><span class="panel-dot c-speaking"></span>Speaking Song</div><div class="panel-item" data-key="dance"><span class="panel-dot c-dance"></span>Story Song Dance ver.</div><div class="panel-item" data-key="all"><span class="panel-dot c-all"></span>ALL</div></div>
+      </div>
+
+      <!-- Volume -->
+      <div class="dropdown" id="vol-dd">
+        <div class="dropdown-btn" onclick="toggleDD(&#39;vol-dd&#39;)">
+          <div class="vol-pill" id="vol-display">Vol.01 &nbsp;It's Chloe Time</div>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="dropdown-panel" id="vol-panel"><div class="panel-item active" data-num="1">Vol.01  It's Chloe Time</div><div class="panel-item" data-num="2">Vol.02  The Weather Book</div><div class="panel-item" data-num="3">Vol.03  My Family</div><div class="panel-item" data-num="4">Vol.04  What Do You Do</div><div class="panel-item" data-num="5">Vol.05  I Love You As Much As</div><div class="panel-item" data-num="6">Vol.06  No! No! No!</div><div class="panel-item" data-num="7">Vol.07  What Does It Mean</div><div class="panel-item" data-num="8">Vol.08  I Love My Bear</div><div class="panel-item" data-num="9">Vol.09  My New Feelings</div><div class="panel-item" data-num="10">Vol.10  All Kinds of Music</div><div class="panel-item" data-num="11">Vol.11  It's Dangerous!</div><div class="panel-item" data-num="12">Vol.12  I Am the BEST!</div></div>
+      </div>
+    </div>
+
+    <!-- 가로 크기 조절 버튼 (가로 모드에서만 표시) -->
+    <div class="width-ctrl" style="display: flex;">
+      <button onclick="adjustWidth(-10)" title="축소">−</button>
+      <span class="size-label" id="size-label">100%</span>
+      <button onclick="adjustWidth(10)" title="확대">+</button>
+    </div>
+
+  </div>
+
+  <!-- iframe 영역 -->
+  <div class="iframe-area">
+    <div class="iframe-box" id="iframe-box"><iframe src="./뮤엠영어Kids_files/story.html" allowfullscreen="" style="width:100%"></iframe></div>
+  </div>
+
+</div>
+
+<script>
+const volumes = [
+  {num:1,  title:"It's Chloe Time"},
+  {num:2,  title:"The Weather Book"},
+  {num:3,  title:"My Family"},
+  {num:4,  title:"What Do You Do"},
+  {num:5,  title:"I Love You As Much As"},
+  {num:6,  title:"No! No! No!"},
+  {num:7,  title:"What Does It Mean"},
+  {num:8,  title:"I Love My Bear"},
+  {num:9,  title:"My New Feelings"},
+  {num:10, title:"All Kinds of Music"},
+  {num:11, title:"It's Dangerous!"},
+  {num:12, title:"I Am the BEST!"},
+];
+
+const categories = [
+  {key:'story',    label:'Story Song',            path:'story',     cls:'c-story'},
+  {key:'audio',    label:'Audio',                 path:'audio',     cls:'c-audio'},
+  {key:'animation',label:'Animation',             path:'animation', cls:'c-anim'},
+  {key:'theme',    label:'Theme Song',            path:'theme',     cls:'c-theme'},
+  {key:'drama',    label:'Drama',                 path:'drama',     cls:'c-drama'},
+  {key:'telling',  label:'Storytelling',          path:'telling',   cls:'c-telling'},
+  {key:'speaking', label:'Speaking Song',         path:'speaking',  cls:'c-speaking'},
+  {key:'dance',    label:'Story Song Dance ver.', path:'dance',     cls:'c-dance'},
+  {key:'all',      label:'ALL',                   path:'all',       cls:'c-all'},
+];
+
+let curCat = 'story';
+let curVol = 1;
+let iframeWidth = 100; // %
+
+// 카테고리 패널 생성
+const catPanel = document.getElementById('cat-panel');
+catPanel.innerHTML = '';
+categories.forEach(c => {
+  const el = document.createElement('div');
+  el.className = 'panel-item' + (c.key === 'story' ? ' active' : '');
+  el.dataset.key = c.key;
+  el.innerHTML = `<span class="panel-dot ${c.cls}"></span>${c.label}`;
+  el.onclick = () => selectCat(c.key);
+  catPanel.appendChild(el);
+});
+
+// Volume 패널 생성
+const volPanel = document.getElementById('vol-panel');
+volPanel.innerHTML = '';
+volumes.forEach(v => {
+  const el = document.createElement('div');
+  el.className = 'panel-item' + (v.num === 1 ? ' active' : '');
+  el.dataset.num = v.num;
+  el.textContent = `Vol.${String(v.num).padStart(2,'0')}  ${v.title}`;
+  el.onclick = () => selectVol(v.num);
+  volPanel.appendChild(el);
+});
+
+function toggleDD(id) {
+  const panel = document.querySelector(`#${id} .dropdown-panel`);
+  const wasOpen = panel.classList.contains('open');
+  document.querySelectorAll('.dropdown-panel').forEach(p => p.classList.remove('open'));
+  if (!wasOpen) panel.classList.add('open');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.dropdown'))
+    document.querySelectorAll('.dropdown-panel').forEach(p => p.classList.remove('open'));
+});
+
+function selectCat(key) {
+  curCat = key;
+  const cat = categories.find(c => c.key === key);
+  const d = document.getElementById('cat-display');
+  d.textContent = cat.label;
+  d.className = 'cat-pill ' + cat.cls;
+  catPanel.querySelectorAll('.panel-item').forEach(el =>
+    el.classList.toggle('active', el.dataset.key === key));
+  document.querySelectorAll('.dropdown-panel').forEach(p => p.classList.remove('open'));
+  loadContent();
+}
+
+function selectVol(num) {
+  curVol = num;
+  const v = volumes[num - 1];
+  document.getElementById('vol-display').textContent =
+    `Vol.${String(num).padStart(2,'0')}  ${v.title}`;
+  volPanel.querySelectorAll('.panel-item').forEach(el =>
+    el.classList.toggle('active', +el.dataset.num === num));
+  document.querySelectorAll('.dropdown-panel').forEach(p => p.classList.remove('open'));
+  loadContent();
+}
+
+function loadContent() {
+  const cat = categories.find(c => c.key === curCat);
+  const url = `https://qr.mumenglishkids.co.kr/${cat.path}?age=7&content=${curVol}`;
+  document.getElementById('iframe-box').innerHTML =
+    `<iframe src="${url}" allowfullscreen style="width:${iframeWidth}%"></iframe>`;
+}
+
+function adjustWidth(delta) {
+  iframeWidth = Math.min(100, Math.max(20, iframeWidth + delta));
+  const iframe = document.querySelector('#iframe-box iframe');
+  if (iframe) iframe.style.width = iframeWidth + '%';
+  document.getElementById('size-label').textContent = iframeWidth + '%';
+}
+
+loadContent();
+
+// 가로/세로 레이아웃에 따라 버튼 표시 제어
+function checkLayout() {
+  const isLandscape = document.querySelector('.page').classList.contains('row-layout');
+  // .page가 row 방향이면 (가로모드) 버튼 표시
+  const page = document.querySelector('.page');
+  const ctrl = document.querySelector('.width-ctrl');
+  const style = window.getComputedStyle(page);
+  if (style.flexDirection === 'row') {
+    ctrl.style.display = 'flex';
+  } else {
+    ctrl.style.display = 'none';
+  }
+}
+// 초기 + 리사이즈/회전 감지
+checkLayout();
+window.addEventListener('resize', checkLayout);
+window.addEventListener('orientationchange', () => setTimeout(checkLayout, 100));
+</script>
+
+
+</body></html>
