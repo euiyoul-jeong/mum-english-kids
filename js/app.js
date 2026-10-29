@@ -88,6 +88,7 @@ function bindRadioKeys(container) {
 function focusChecked(container) {
   const el = container.querySelector('[aria-checked="true"]');
   if (el) { el.focus(); el.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+  return !!el;
 }
 
 // ── 화면 요소 ──
@@ -97,6 +98,8 @@ const volList = $('vol-list');
 const sheetList = $('sheet-list');
 const volSheet = $('vol-sheet');
 const volCurrent = $('vol-current');
+const settingsSheet = $('settings-sheet');
+const settingsBtn = $('settings-btn');
 const prevBtn = $('prev-vol');
 const nextBtn = $('next-vol');
 const widthRange = $('width-range');
@@ -184,6 +187,9 @@ function render() {
   renderVolItems(volList, age, cat, vol, v => setState({ vol: v }));
   if (!volSheet.hidden) renderVolItems(sheetList, age, cat, vol, pickFromSheet);
 
+  $('settings-age').textContent = `${age}세`;
+  settingsBtn.setAttribute('aria-label', `설정, 나이 ${age}세`);
+
   $('vol-current-num').textContent = pad2(vol);
   $('vol-current-name').textContent = volTitle(age, cat, vol);
   volCurrent.setAttribute('aria-label', `Vol.${pad2(vol)} ${volTitle(age, cat, vol)} — 목록 열기`);
@@ -198,32 +204,45 @@ function render() {
   loadContent();
 }
 
-// ── Vol 시트 (세로 화면) ──
-function openSheet() {
-  renderVolItems(sheetList, state.age, state.cat, state.vol, pickFromSheet);
-  volSheet.hidden = false;
-  volCurrent.setAttribute('aria-expanded', 'true');
-  focusChecked(sheetList);
+// ── 시트 (Vol 목록·설정·iOS 안내 공용) ──
+let openedSheet = null;
+let sheetTrigger = null;
+
+function openSheet(sheet, trigger) {
+  closeSheet(false);
+  sheet.hidden = false;
+  openedSheet = sheet;
+  sheetTrigger = trigger;
+  if (trigger.hasAttribute('aria-expanded')) trigger.setAttribute('aria-expanded', 'true');
+  if (!focusChecked(sheet)) sheet.querySelector('button').focus();
 }
 
-function closeSheet() {
-  if (volSheet.hidden) return;
-  volSheet.hidden = true;
-  volCurrent.setAttribute('aria-expanded', 'false');
-  volCurrent.focus();
+function closeSheet(restoreFocus = true) {
+  if (!openedSheet) return;
+  openedSheet.hidden = true;
+  if (sheetTrigger.hasAttribute('aria-expanded')) sheetTrigger.setAttribute('aria-expanded', 'false');
+  if (restoreFocus) sheetTrigger.focus();
+  openedSheet = sheetTrigger = null;
 }
+
+document.querySelectorAll('.sheet-backdrop').forEach(backdrop => {
+  backdrop.addEventListener('click', e => {
+    if (e.target === backdrop || e.target.closest('[data-close]')) closeSheet();
+  });
+});
 
 function pickFromSheet(vol) {
   closeSheet();
   setState({ vol });
 }
 
+volCurrent.setAttribute('aria-expanded', 'false');
 volCurrent.addEventListener('click', () => {
-  if (isLandscape()) focusChecked(volList);
-  else openSheet();
+  if (isLandscape()) { focusChecked(volList); return; }
+  renderVolItems(sheetList, state.age, state.cat, state.vol, pickFromSheet);
+  openSheet(volSheet, volCurrent);
 });
-$('sheet-close').addEventListener('click', closeSheet);
-volSheet.addEventListener('click', e => { if (e.target === volSheet) closeSheet(); });
+settingsBtn.addEventListener('click', () => openSheet(settingsSheet, settingsBtn));
 
 // ── 이전/다음 Vol, 화면 너비 ──
 prevBtn.addEventListener('click', () => setState({ vol: state.vol - 1 }));
@@ -231,13 +250,9 @@ nextBtn.addEventListener('click', () => setState({ vol: state.vol + 1 }));
 widthRange.addEventListener('input', () => setState({ width: widthRange.value }));
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    if (!volSheet.hidden) closeSheet();
-    else if (!iosModal.hidden) closeIosModal();
-    return;
-  }
+  if (e.key === 'Escape') { closeSheet(); return; }
   if (e.altKey || e.ctrlKey || e.metaKey) return;
-  if (!volSheet.hidden || (e.target.closest && e.target.closest('[role="radiogroup"], input'))) return;
+  if (openedSheet || (e.target.closest && e.target.closest('[role="radiogroup"], input'))) return;
   if (e.key === 'ArrowLeft' && state.vol > 1) setState({ vol: state.vol - 1 });
   else if (e.key === 'ArrowRight' && state.vol < VOL_COUNT) setState({ vol: state.vol + 1 });
 });
@@ -262,13 +277,28 @@ $('share-btn').addEventListener('click', async () => {
     try { await navigator.share({ title: document.title, url }); } catch {}
     return;
   }
-  try {
-    await navigator.clipboard.writeText(url);
-    showToast('링크를 복사했어요');
-  } catch {
-    showToast('복사하지 못했어요. 주소창의 링크를 이용해 주세요');
-  }
+  const copied = await copyText(url);
+  showToast(copied ? '링크를 복사했어요' : '복사하지 못했어요. 주소창의 링크를 이용해 주세요');
 });
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    // 클립보드 API가 막힌 환경용 예전 방식
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+    document.body.append(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch {}
+    ta.remove();
+    return ok;
+  }
+}
 
 // ── 오프라인 안내 ──
 window.addEventListener('online', () => {
@@ -299,11 +329,6 @@ window.addEventListener('appinstalled', () => {
 
 if (isIOS && !isStandalone()) installBtn.hidden = false;
 
-function closeIosModal() {
-  iosModal.hidden = true;
-  installBtn.focus();
-}
-
 installBtn.addEventListener('click', async () => {
   if (installPrompt) {
     installPrompt.prompt();
@@ -311,13 +336,9 @@ installBtn.addEventListener('click', async () => {
     installPrompt = null;
     installBtn.hidden = true;
   } else if (isIOS) {
-    iosModal.hidden = false;
-    $('ios-modal-close').focus();
+    openSheet(iosModal, installBtn);
   }
 });
-
-$('ios-modal-close').addEventListener('click', closeIosModal);
-iosModal.addEventListener('click', e => { if (e.target === iosModal) closeIosModal(); });
 
 // ── 시작 ──
 render();

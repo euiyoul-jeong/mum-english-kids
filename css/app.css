@@ -45,17 +45,16 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .stage { flex: 1; min-height: 0; padding: 0 12px 12px; display: flex; }
 
 /* ── 브랜드 ── */
-.brand { display: flex; align-items: center; gap: 10px; }
-.brand-badge { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 0 2px var(--line); }
-.brand-name { display: flex; align-items: baseline; gap: 6px; line-height: 1; white-space: nowrap; }
-.brand-ko { font-size: 1.15rem; font-weight: 900; letter-spacing: -0.5px; }
-.brand-kids { font-family: 'Nunito', sans-serif; font-size: 1.3rem; font-weight: 900; letter-spacing: 0.5px; }
+.brand { display: flex; align-items: center; gap: 8px; }
+.brand-badge { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 0 2px var(--line); }
+.brand-name { display: flex; align-items: baseline; gap: 4px; line-height: 1; white-space: nowrap; }
+.brand-ko { font-size: 0.95rem; font-weight: 900; letter-spacing: -0.5px; }
+.brand-kids { font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 900; letter-spacing: 0.3px; }
 .brand-kids b { display: inline-block; font-weight: 900; }
 .brand-kids b:nth-child(1) { color: var(--kids-pink); transform: rotate(-8deg); }
 .brand-kids b:nth-child(2) { color: var(--kids-pink); transform: translateY(1px); }
 .brand-kids b:nth-child(3) { color: var(--kids-red); transform: rotate(6deg); }
 .brand-kids b:nth-child(4) { color: var(--kids-green); transform: rotate(-6deg); }
-.brand-actions { margin-left: auto; display: flex; gap: 8px; }
 
 .icon-btn {
   width: var(--tap); height: var(--tap); border-radius: var(--r);
@@ -65,7 +64,26 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 }
 .icon-btn:hover { background: var(--surface-hover); }
 
-.install-btn, .primary-btn {
+.install-btn {
+  width: 32px; height: 32px; border-radius: var(--r-sm); flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--accent); color: var(--on-accent);
+  transition: filter 0.15s;
+}
+.install-btn svg { width: 18px; height: 18px; stroke-width: 2.4; }
+
+.settings-btn {
+  margin-left: auto; flex-shrink: 0;
+  height: 36px; padding: 0 12px 0 10px; border-radius: var(--r);
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface); border: 1px solid var(--line);
+  font-weight: 700; font-size: 0.85rem; white-space: nowrap;
+  transition: background 0.15s;
+}
+.settings-btn:hover { background: var(--surface-hover); }
+.settings-btn svg { width: 18px; height: 18px; color: var(--muted); }
+
+.primary-btn {
   height: var(--tap); padding: 0 14px; border-radius: var(--r);
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   background: var(--accent); color: var(--on-accent);
@@ -151,9 +169,22 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .vol-item[aria-checked="true"] { background: var(--surface-2); color: var(--text); font-weight: 700; }
 .vol-item[aria-checked="true"] .vol-num { background: var(--accent); color: var(--on-accent); }
 
-/* ── 화면 너비 (가로 화면 전용) ── */
-.width-block { display: none; }
-.width-block input[type="range"] { width: 100%; accent-color: var(--accent); }
+/* ── 설정 시트 내용 ── */
+.setting { padding: 4px 2px 16px; }
+.setting-title {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 8px; font-size: 0.8rem; font-weight: 700; color: var(--muted);
+}
+.setting-title output { color: var(--text); }
+.width-setting { display: none; }
+.width-setting input[type="range"] { width: 100%; accent-color: var(--accent); }
+.share-btn {
+  width: 100%; height: 44px; border-radius: var(--r);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--surface-2); border: 1px solid var(--line);
+  font-weight: 700; font-size: 0.9rem; transition: background 0.15s;
+}
+.share-btn:hover { background: var(--surface-hover); }
 
 /* ── 콘텐츠 무대 ── */
 .frame {
@@ -245,23 +276,18 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   .app { flex-direction: row; }
 
   .sidebar {
-    width: 280px; height: 100%; gap: 20px; padding: 18px 16px;
+    width: 290px; height: 100%; gap: 20px; padding: 18px 14px;
     background: var(--side); border-right: 1px solid var(--line);
     overflow-x: hidden; overflow-y: auto;
     scrollbar-width: thin; scrollbar-color: var(--line) transparent;
   }
 
-  .brand { flex-wrap: wrap; row-gap: 14px; }
-  .brand-badge { width: 48px; height: 48px; }
-  .brand-actions { margin-left: 0; width: 100%; }
-  .brand-actions .install-btn { flex: 1; }
 
   .block-title {
     position: static; width: auto; height: auto; overflow: visible; clip: auto;
     display: flex; justify-content: space-between; align-items: baseline;
     margin-bottom: 8px; font-size: 0.75rem; font-weight: 700; color: var(--muted); letter-spacing: 0.5px;
   }
-  .block-title output { color: var(--text); font-weight: 700; }
 
   .cat-list {
     display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
@@ -272,7 +298,11 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 
   .vol-block > .vol-list { display: flex; margin-top: 8px; }
 
-  .width-block { display: block; }
+  .width-setting { display: block; }
+
+  .sheet-backdrop { align-items: center; padding: 16px; }
+  .sheet:not(.sheet-center) { max-width: 420px; border-radius: 20px; border-bottom: 1px solid var(--line); padding-bottom: 16px; }
+  .sheet-handle { display: none; }
 
   .stage { padding: 16px; height: 100%; }
 }

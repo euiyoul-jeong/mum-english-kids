@@ -1,5 +1,5 @@
 // 앱 셸 캐시 — 파일을 바꾸면 VERSION과 index.html의 ?v= 값을 함께 올릴 것
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = `mumkids-${VERSION}`;
 const SHELL = [
   './',
