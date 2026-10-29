@@ -1,12 +1,12 @@
-// 앱 셸 캐시 — 파일을 바꾸면 VERSION을 올릴 것
+// 앱 셸 캐시 — 파일을 바꾸면 VERSION과 index.html의 ?v= 값을 함께 올릴 것
 const VERSION = 'v2';
 const CACHE = `mumkids-${VERSION}`;
 const SHELL = [
   './',
   './index.html',
-  './css/app.css',
-  './js/data.js',
-  './js/app.js',
+  `./css/app.css?${VERSION}`,
+  `./js/data.js?${VERSION}`,
+  `./js/app.js?${VERSION}`,
   './manifest.webmanifest',
   './favicon.ico',
   './icons/icon-192.png',
@@ -45,15 +45,16 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // 정적 파일: stale-while-revalidate
+  // 정적 파일: 네트워크 우선(HTML과 버전이 어긋나지 않게), 오프라인이면 캐시
   e.respondWith(
-    caches.open(CACHE).then(cache =>
-      cache.match(req).then(cached => {
-        const network = fetch(req)
-          .then(res => { if (res.ok) cache.put(req, res.clone()); return res; })
-          .catch(() => cached);
-        return cached || network;
+    fetch(req)
+      .then(res => {
+        if (res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then(c => c.put(req, copy));
+        }
+        return res;
       })
-    )
+      .catch(() => caches.match(req))
   );
 });

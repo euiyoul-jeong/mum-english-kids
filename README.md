@@ -21,7 +21,7 @@
 | `css/app.css` | 스타일 |
 | `js/data.js` | 나이·카테고리·Vol 제목 데이터 |
 | `js/app.js` | 상태, 드롭다운, 설치, 오프라인 처리 |
-| `sw.js` | 서비스 워커(앱 셸 캐시) — 파일을 고치면 `VERSION`을 올릴 것 |
+| `sw.js` | 서비스 워커(앱 셸 캐시) — 파일을 고치면 `VERSION`과 `index.html`의 `?v2` 값을 함께 올릴 것 |
 | `manifest.webmanifest` | PWA 설정 |
 | `legacy/` | 리팩토링 전 원본 |
 
