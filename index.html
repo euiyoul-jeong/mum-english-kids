@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>뮤엠영어 Kids</title>
 <meta name="description" content="뮤엠영어 Kids 학습 콘텐츠 뷰어">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0b0d17">
 <meta name="robots" content="noindex">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./favicon.ico" sizes="16x16">
@@ -17,84 +17,106 @@
 <meta name="apple-mobile-web-app-title" content="뮤엠Kids">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Noto+Sans+KR:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
-<div class="page">
+<div class="app">
 
-  <!-- 좌측(세로: 상단) 패널 -->
-  <header class="left-panel">
+  <!-- 컨트롤 (세로: 상단 / 가로: 좌측 사이드바) -->
+  <aside class="sidebar">
 
-    <h1 class="logo-wrap">
-      <img class="logo" src="./icons/logo.png" alt="뮤엠영어 Kids" width="1156" height="349">
-    </h1>
-
-    <div class="selector-row">
-      <!-- 나이 -->
-      <div class="dropdown" id="age-dd">
-        <button type="button" class="dropdown-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="나이 선택">
-          <span class="age-pill" data-display></span>
-          <span class="arrow" aria-hidden="true">▼</span>
+    <header class="brand">
+      <img class="brand-badge" src="./icons/icon-192.png" alt="" width="192" height="192">
+      <h1 class="brand-name">
+        <span class="brand-ko">뮤엠영어</span>
+        <span class="brand-kids" aria-label="Kids"><b>K</b><b>i</b><b>d</b><b>s</b></span>
+      </h1>
+      <div class="brand-actions">
+        <button type="button" class="icon-btn" id="share-btn" aria-label="지금 보는 화면 링크 공유" title="링크 공유">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
         </button>
-        <ul class="dropdown-panel" role="listbox" aria-label="나이"></ul>
-      </div>
-
-      <!-- 카테고리 -->
-      <div class="dropdown" id="cat-dd">
-        <button type="button" class="dropdown-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="카테고리 선택">
-          <span class="cat-pill" data-display></span>
-          <span class="arrow" aria-hidden="true">▼</span>
+        <button type="button" class="install-btn" id="install-btn" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+          <span>앱 설치</span>
         </button>
-        <ul class="dropdown-panel" role="listbox" aria-label="카테고리"></ul>
       </div>
+    </header>
 
-      <!-- Volume + 이전/다음 -->
-      <div class="vol-row">
-        <button type="button" class="nav-btn" id="prev-vol" aria-label="이전 Vol">◀</button>
-        <div class="dropdown" id="vol-dd">
-          <button type="button" class="dropdown-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Vol 선택">
-            <span class="vol-pill" data-display></span>
-            <span class="arrow" aria-hidden="true">▼</span>
-          </button>
-          <ul class="dropdown-panel" role="listbox" aria-label="Vol"></ul>
-        </div>
-        <button type="button" class="nav-btn" id="next-vol" aria-label="다음 Vol">▶</button>
+    <section class="block" aria-labelledby="age-title">
+      <h2 class="block-title" id="age-title">나이</h2>
+      <div class="segmented" id="age-group" role="radiogroup" aria-labelledby="age-title"></div>
+    </section>
+
+    <section class="block" aria-labelledby="cat-title">
+      <h2 class="block-title" id="cat-title">콘텐츠</h2>
+      <div class="cat-list" id="cat-group" role="radiogroup" aria-labelledby="cat-title"></div>
+    </section>
+
+    <section class="block vol-block" aria-labelledby="vol-title">
+      <h2 class="block-title" id="vol-title">Vol</h2>
+      <div class="vol-nav">
+        <button type="button" class="step-btn" id="prev-vol" aria-label="이전 Vol">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button type="button" class="vol-current" id="vol-current" aria-haspopup="dialog">
+          <span class="vol-num" id="vol-current-num"></span>
+          <span class="vol-name" id="vol-current-name"></span>
+          <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <button type="button" class="step-btn" id="next-vol" aria-label="다음 Vol">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
       </div>
-    </div>
+      <div class="vol-list" id="vol-list" role="radiogroup" aria-labelledby="vol-title"></div>
+    </section>
 
-    <!-- 가로 크기 조절 (가로 모드에서만 표시) -->
-    <div class="width-ctrl">
-      <button type="button" id="width-down" title="축소" aria-label="화면 폭 축소">−</button>
-      <span class="size-label" id="size-label" aria-live="polite">100%</span>
-      <button type="button" id="width-up" title="확대" aria-label="화면 폭 확대">+</button>
-    </div>
+    <section class="block width-block" aria-labelledby="width-title">
+      <h2 class="block-title" id="width-title">화면 너비 <output id="size-label" for="width-range">100%</output></h2>
+      <input type="range" id="width-range" min="40" max="100" step="10" value="100" aria-labelledby="width-title">
+    </section>
 
-    <button type="button" class="install-btn" id="install-btn" hidden>앱 설치</button>
+  </aside>
 
-  </header>
-
-  <!-- 콘텐츠 영역 -->
-  <main class="iframe-area">
-    <div class="iframe-box">
+  <!-- 콘텐츠 -->
+  <main class="stage">
+    <div class="frame">
       <iframe id="viewer" title="뮤엠영어 Kids 콘텐츠" allow="autoplay; fullscreen" allowfullscreen></iframe>
-      <div class="offline-overlay" id="offline-overlay" hidden>
-        <div class="big">오프라인</div>
-        <div class="sub">인터넷 연결이 필요합니다.<br>연결되면 자동으로 다시 불러옵니다.</div>
+      <div class="loader" id="loader" aria-hidden="true"><span class="spinner"></span></div>
+      <div class="offline" id="offline-overlay" role="status" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0M12 19h.01M3 3l18 18"/></svg>
+        <strong>인터넷 연결이 필요해요</strong>
+        <span>연결되면 자동으로 다시 불러옵니다.</span>
       </div>
     </div>
   </main>
 
 </div>
 
-<!-- iOS 설치 안내 -->
-<div class="modal" id="ios-modal" hidden>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="ios-modal-title">
-    <h2 id="ios-modal-title">홈 화면에 추가하기</h2>
-    <p>Safari 하단의 <b>공유</b> 버튼을 누른 뒤<br><b>홈 화면에 추가</b>를 선택하세요.</p>
-    <button type="button" id="ios-modal-close">확인</button>
+<!-- Vol 선택 시트 (세로 화면) -->
+<div class="sheet-backdrop" id="vol-sheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="sheet-title">Vol 선택</h2>
+      <button type="button" class="icon-btn" id="sheet-close" aria-label="닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="vol-list" id="sheet-list" role="radiogroup" aria-labelledby="sheet-title"></div>
   </div>
 </div>
+
+<!-- iOS 설치 안내 -->
+<div class="sheet-backdrop is-center" id="ios-modal" hidden>
+  <div class="sheet sheet-center" role="dialog" aria-modal="true" aria-labelledby="ios-modal-title">
+    <h2 id="ios-modal-title">홈 화면에 추가하기</h2>
+    <p>Safari 하단의 <b>공유</b> 버튼을 누른 뒤<br><b>홈 화면에 추가</b>를 선택하세요.</p>
+    <button type="button" class="primary-btn" id="ios-modal-close">확인</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="./js/data.js"></script>
 <script src="./js/app.js"></script>

@@ -1,5 +1,5 @@
 // 앱 셸 캐시 — 파일을 바꾸면 VERSION을 올릴 것
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE = `mumkids-${VERSION}`;
 const SHELL = [
   './',
@@ -9,7 +9,6 @@ const SHELL = [
   './js/app.js',
   './manifest.webmanifest',
   './favicon.ico',
-  './icons/logo.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
